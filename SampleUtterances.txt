@@ -1,0 +1,16 @@
+DialogIntent Find {Item}
+DialogIntent I'd like to make {Item}
+DialogIntent {Item}
+MyHelpIntent what can I say
+MyHelpIntent what do I say
+StartIngredientsIntent ingredients
+StartIngredientsIntent what are the ingredients
+NextIngredientIntent next ingredient
+LastIngredientIntent last ingredient
+ReadRecipeIntent read recipe
+ReadRecipeIntent start
+NextRecipeIntent next step
+LastRecipeIntent last step
+MyStopIntent quit
+MyStopIntent exit
+MyRestartIntent start again
