@@ -1,5 +1,15 @@
 from __future__ import print_function
 
+# Speech Outputs:
+alarm_set_time = "9:30 AM "
+settings_options = "You can say \
+                    Set alarm \
+                    Change how I wake up "
+welcome_response = "Hello, you have an alarm set for "+ alarm_set_time
+welcome_reprompt = "Would you like to change your alarm? " + settings_options
+session_end_response = "Quitting Session.  Your alarm has been set to " + alarm_set_time
+
+
 # --------------- Helpers that build all of the responses ----------------------
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
@@ -40,10 +50,8 @@ def get_welcome_response():
     print('LAUNCH')
     session_attributes = create_dialog_attributes("")
     card_title = "Welcome"
-    speech_output = "recipe assistant, what recipe would you like to make?"
-    # If the user either does not reply to the welcome message or says something
-    # that is not understood, they will be prompted again with this text.
-    reprompt_text = "recipe assistant, what recipe would you like to make?"
+    speech_output = welcome_response
+    reprompt_text = welcome_reprompt
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -51,20 +59,15 @@ def get_welcome_response():
 def get_help_response():
     session_attributes = {}
     card_title = "Help"
-    speech_output = "You can say these things. \
-            Find recipe. \
-            I'd like to make recipe. Exit. Quit."
-    # If the user either does not reply to the welcome message or says something
-    # that is not understood, they will be prompted again with this text.
-    reprompt_text = speech_output
+    speech_output = settings_options
+    reprompt_text = settings_options
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
 def handle_session_end_request():
     card_title = "Session Ended"
-    speech_output = "Have a nice day! "
-    # Setting this to true ends the session and exits the skill.
+    speech_output = session_end_response
     should_end_session = True
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
@@ -200,7 +203,7 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "DialogIntent":
+    if intent_name == "SetAlarmIntent":
         return dialog(intent, session)
     elif intent_name == "MyHelpIntent":
         return howto(intent, session)
