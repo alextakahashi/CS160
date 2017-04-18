@@ -1,6 +1,8 @@
 Wake Me Up Inside
 ===================
 
+[![CircleCI](https://circleci.com/gh/alextakahashi/CS160.svg?style=svg)](https://circleci.com/gh/alextakahashi/CS160)
+
 Development Workflow
 ----------------
 
