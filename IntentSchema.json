@@ -1,6 +1,12 @@
 {
   "intents": [
     {
+      "intent": "SettingsIntent"
+    },
+    {
+      "intent": "SetAlarmIntent"
+    },
+    {
       "intent": "DialogIntent",
       "slots": [
         {
@@ -13,25 +19,7 @@
       "intent": "MyHelpIntent"
     },
     {
-      "intent": "SettingsIntent"
-    },
-    {
-      "intent": "SetAlarmIntent"
-    },
-    {
       "intent": "ChangeHowIWakeUp"
-    },
-    {
-      "intent": "LastIngredientIntent"
-    },
-    {
-      "intent": "ReadRecipeIntent"
-    },
-    {
-      "intent": "NextRecipeIntent"
-    },
-    {
-      "intent": "LastRecipeIntent"
     },
     {
       "intent": "AMAZON.HelpIntent"

@@ -16,9 +16,21 @@ conn = boto.dynamodb.connect_to_region(
 alarm_set_time = "9:30 AM "
 settings_options = "You can say \
                     Set alarm \
+                    or \
                     Change how I wake up "
 welcome_response = "Hello, you have an alarm set for "+ alarm_set_time
 welcome_reprompt = "Would you like to change your alarm? " + settings_options
+
+settings_response = "Your alarm is currently set to " + alarm_set_time + ". "+ settings_options
+settings_reprompt = settings_options
+
+set_alarm_options = "You can say \
+                     something like ... \
+                     9:30AM." 
+set_alarm_response = "What time would you like to wake up at? " + set_alarm_options
+set_alarm_reprompt = set_alarm_options
+
+
 session_end_response = "Quitting Session.  Your alarm has been set to " + alarm_set_time
 
 
@@ -64,6 +76,26 @@ def get_welcome_response():
     card_title = "Welcome"
     speech_output = welcome_response
     reprompt_text = welcome_reprompt
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_settings_response():
+    print('Settings')
+    session_attributes = create_dialog_attributes("")
+    card_title = "Settings"
+    speech_output = settings_response
+    reprompt_text = settings_reprompt
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+def get_set_alarm_response():
+    print('Set Alarm')
+    session_attributes = create_dialog_attributes("")
+    card_title = "Set Alarm"
+    speech_output = set_alarm_response
+    reprompt_text = set_alarm_reprompt
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -193,8 +225,10 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "SetAlarmIntent":
-        return dialog(intent, session)
+    if intent_name == "SettingsIntent":
+        return get_settings_response()
+    elif intent_name == "SetAlarmIntent":
+        return get_set_alarm_response()
     elif intent_name == "MyHelpIntent":
         return howto(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
