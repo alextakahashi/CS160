@@ -1,43 +1,46 @@
 {
   "intents": [
-	{
+    {
       "intent": "DialogIntent",
       "slots": [
-	        {
-	          "name": "Item",
-	          "type": "AMAZON.Food"
-	        }
-	      ]
+        {
+          "name": "Item",
+          "type": "AMAZON.Food"
+        }
+      ]
     },
     {
-        "intent": "MyHelpIntent"
+      "intent": "MyHelpIntent"
     },
     {
-        "intent": "StartIngredientsIntent"
+      "intent": "SettingsIntent"
     },
     {
-        "intent": "NextIngredientIntent"
+      "intent": "SetAlarmIntent"
     },
     {
-        "intent": "LastIngredientIntent"
+      "intent": "ChangeHowIWakeUp"
     },
     {
-        "intent": "ReadRecipeIntent"
+      "intent": "LastIngredientIntent"
     },
     {
-        "intent": "NextRecipeIntent"
+      "intent": "ReadRecipeIntent"
     },
     {
-        "intent": "LastRecipeIntent"
+      "intent": "NextRecipeIntent"
+    },
+    {
+      "intent": "LastRecipeIntent"
     },
     {
       "intent": "AMAZON.HelpIntent"
     },
     {
-        "intent": "MyStopIntent"
+      "intent": "MyStopIntent"
     },
     {
-        "intent": "MyRestartIntent"
+      "intent": "MyRestartIntent"
     }
   ]
 }

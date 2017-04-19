@@ -133,7 +133,7 @@ def dialog(intent, session):
         intent['name'], speech_output, reprompt_text, should_end_session))
 
 def wakemeup(intent, session):
-	default_dialog = "What would you like to do?"
+    default_dialog = "What would you like to do?"
     failure_speech = "I couldn't make that configuration. Would you like to try again?"  
     session_attributes = {}
     reprompt_text = None
