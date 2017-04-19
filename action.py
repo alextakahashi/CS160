@@ -1,4 +1,16 @@
 from __future__ import print_function
+import boto.dynamodb
+
+# Global access to connection. We'll need it across the board so initialize it now.
+aws_access_key_id='AKIAJTXGYAYQRU4666WA'
+AWSSecretKey='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'
+
+conn = boto.dynamodb.connect_to_region(
+        'us-east-1',
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=AWSSecretKey
+        )
+
 
 # Speech Outputs:
 alarm_set_time = "9:30 AM "
@@ -98,8 +110,8 @@ def stop_handle(intent, session):
         card_title, speech_output, reprompt_text, should_end_session))
 
 def dialog(intent, session):
-    default_dialog = "recipe assistant, what recipe would you like to make?"
-    failure_speech = "I couldn't find that recipe. Would you like to try again?"  
+    default_dialog = "What would you like to do?"
+    failure_speech = "I couldn't make that configuration. Would you like to try again?"  
     session_attributes = {}
     reprompt_text = None
     card_title = intent['name']
@@ -108,51 +120,29 @@ def dialog(intent, session):
     if 'Item' in intent['slots']:
         dialog_request = intent['slots']['Item']['value']
         session_attributes = create_dialog_attributes(dialog_request)
-        if session_attributes['dialog'] > 0:
-            raise ValueError("Wrong intent")
-
         speech_output = default_dialog
 
-        #This is where we would go to the database and get the recipe, if it exists.
-        table = conn.get_table('Recipes')
-        item = table.scan().response
-        
-        if item['Count'] <= 0:
-            speech_output = failure_speech
-        else:
-            recipe = ""
-            print(dialog_request)
-            print(item)
-            for i in item['Items']:
-                if i['RecipeName'].lower() == dialog_request.lower():
-                    recipe = i
-            #recipe = item['Items'][0] #Get the first element because we're lazy
-            if recipe == "":
-                speech_output = failure_speech
-                raise ValueError("This shouldn't be empty string")
-
-            """
-            Example result from the call that assigns the variable "recipe":
-            {u'Directions': 
-                u'Crack eggs\nScramble Eggs\nPut Bacon in Pan\n...\nCook 3 mins', 
-            u'Image': u'img.clipartfox.com/f9b....jpeg', 
-            'RecipeName': u'Bacon and Eggs', 
-            u'Ingredients': u'Bacon\nEggs'}
-            """
-            session_attributes['recipe'] = recipe
-
-            session_attributes['dialog'] = 1 #Enter recipe dialog.
-            print(recipe)
-            speech_output = "I found the recipe %s. \
-                    Tell me 'ingredients' or 'next ingredient' and I can read you \
-                    the ingredients. When those are done, I will follow through \
-                    with the recipe." % (recipe['RecipeName'])
+        #At this point, you should get the table and then push stuff into it.
+        table = conn.get_table('wakeMeUpInside')
+        #item = table.scan().response
 
     # Setting reprompt_text to None signifies that we do not want to reprompt
     # the user. If the user does not respond or says something that is not
     # understood, the session will end.
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
+
+def wakemeup(intent, session):
+	default_dialog = "What would you like to do?"
+    failure_speech = "I couldn't make that configuration. Would you like to try again?"  
+    session_attributes = {}
+    reprompt_text = None
+    card_title = intent['name']
+    should_end_session = False
+
+    #This grabs every item. Consider using table.query() for this part.
+    table = conn.get_table('wakeMeUpInside')
+    item = table.scan().response
 
 def howto(intent, session):
     session_attributes = {}
