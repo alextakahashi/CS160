@@ -3,16 +3,12 @@ SettingsIntent Configuration
 SettingsIntent Options
 
 SetAlarmIntent set alarm
-ChangeHowIWakeUp change how I wake up
 
 SetAlarmAt set alarm for {Time}
 SetAlarmAt set alarm at {Time}
 SetAlarmAt wake me up at {Time}
 SetAlarmAt {Time}
 
+ChangeHowIWakeUp change how I wake up
 
-MyHelpIntent what can I say
-MyHelpIntent what do I say
-MyStopIntent quit
-MyStopIntent exit
-MyRestartIntent start again
+MethodIntent {Method}

@@ -11,7 +11,6 @@ conn = boto.dynamodb.connect_to_region(
         aws_secret_access_key=AWSSecretKey
         )
 
-
 # Speech Outputs:
 alarm_set_time = "9:30 AM "
 settings_options = "You can say \
@@ -31,7 +30,7 @@ set_alarm_response = "What time would you like to wake up? " + set_alarm_options
 set_alarm_reprompt = set_alarm_options
 
 change_how_i_wake_up_options = "You can say \
-                                simple math, \
+                                math, \
                                 trivia, \
                                 weather, \
                                 or \
@@ -82,7 +81,7 @@ def get_welcome_response():
     add those here
     """
     print('LAUNCH')
-    session_attributes = create_dialog_attributes("")
+    session_attributes = create_dialog_attributes()
     card_title = "Welcome"
     speech_output = welcome_response
     reprompt_text = welcome_reprompt
@@ -92,7 +91,7 @@ def get_welcome_response():
 
 def get_settings_response():
     print('Settings')
-    session_attributes = create_dialog_attributes("")
+    session_attributes = create_dialog_attributes()
     card_title = "Settings"
     speech_output = settings_response
     reprompt_text = settings_reprompt
@@ -102,7 +101,7 @@ def get_settings_response():
 
 def get_set_alarm_response():
     print('Set Alarm')
-    session_attributes = create_dialog_attributes("")
+    session_attributes = create_dialog_attributes()
     card_title = "Set Alarm"
     speech_output = set_alarm_response
     reprompt_text = set_alarm_reprompt
@@ -112,7 +111,7 @@ def get_set_alarm_response():
 
 def get_change_how_i_wake_up_response():
     print("Change How I Wake Up")
-    session_attributes = create_dialog_attributes("")
+    session_attributes = create_dialog_attributes()
     card_title = "Change How I Wake Up"
     speech_output = change_how_i_wake_up_response
     reprompt_text = change_how_i_wake_up_reprompt
@@ -136,30 +135,11 @@ def handle_session_end_request():
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
-def create_dialog_attributes(dialog_request, dialog=0, alarmTime="9:30 AM"):
+def create_dialog_attributes(alarmTime="9:30 AM", method="math"):
     return {
-        "dialogRequest": dialog_request,
-        "dialog": dialog,
-        "alarm_time": alarmTime
+        "alarm_time": alarmTime,
+        "method": method,
         }
-
-def stop_handle(intent, session):
-    session_attributes = {}
-    reprompt_text = None
-    card_title = "Stop"
-    should_end_session = False
-    speech_output = "Okay."
-
-    if 'attributes' in session:
-        session_attributes = session['attributes']
-        if session_attributes['dialog'] > 0:
-            speech_output += " Returning you to the main menu."
-            session_attributes['dialog'] = 0
-        else:
-            handle_session_end_request()
-
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
 
 def dialog(intent, session):
     print("Dialog")
@@ -169,19 +149,18 @@ def dialog(intent, session):
     reprompt_text = None
     card_title = intent['name']
     should_end_session = False
-
-    print("This is the intent")
-    print(intent)
-
     intent_name = intent['name']
 
-    print("these are the intents")
-    print(intent['slots'])
-
     if 'Time' in intent['slots']:
-        dialog_request = intent['slots']['Time']['value']
-        session_attributes = create_dialog_attributes(dialog_request)
-        speech_output = "I have set your alarm for " + dialog_request
+        time = intent['slots']['Time']['value']
+        session_attributes = create_dialog_attributes(time)
+        speech_output = "I have set your alarm for " + time
+
+    if 'Method' in intent['slots']:
+        method = intent['slots']['Method']['value']
+        # Must get time first
+        session_attributes = create_dialog_attributes(method)
+        speech_output = "You are now set up to wake up to " + method
 
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
@@ -203,26 +182,17 @@ def wakemeup(intent, session):
 def on_session_started(session_started_request, session):
     """ Called when the session starts """
 
-    # print("on_session_started requestId=" + session_started_request['requestId']
-    #       + ", sessionId=" + session['sessionId'])
-
 
 def on_launch(launch_request, session):
     """ Called when the user launches the skill without specifying what they
     want
     """
-
-    # print("on_launch requestId=" + launch_request['requestId'] +
-    #       ", sessionId=" + session['sessionId'])
     # Dispatch to your skill's launch
     return get_welcome_response()
 
 
 def on_intent(intent_request, session):
     """ Called when the user specifies an intent for this skill """
-
-    # print("on_intent requestId=" + intent_request['requestId'] +
-    #       ", sessionId=" + session['sessionId'])
 
     intent = intent_request['intent']
     intent_name = intent_request['intent']['name']
@@ -236,16 +206,14 @@ def on_intent(intent_request, session):
         return dialog(intent, session)
     elif intent_name == "ChangeHowIWakeUp":
         return get_change_how_i_wake_up_response()
+    elif intent_name == "MethodIntent":
+        return dialog(intent, session)
     elif intent_name == "MyHelpIntent":
         return howto(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_help_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
         return handle_session_end_request()
-    elif intent_name == "MyStopIntent":
-        return stop_handle(intent, session)
-    elif intent_name == "MyRestartIntent":
-        return restart_handle(intent, session)
     else:
         raise ValueError("Invalid intent")
 
@@ -255,11 +223,7 @@ def on_session_ended(session_ended_request, session):
 
     Is not called when the skill returns should_end_session=true
     """
-    # print("on_session_ended requestId=" + session_ended_request['requestId'] +
-    #       ", sessionId=" + session['sessionId'])
-    # add cleanup logic here
-    #return stop_handle(session_ended_request, session)
-    return build_response(create_dialog_attributes(""), build_speechlet_response(
+    return build_response(create_dialog_attributes(), build_speechlet_response(
         "", "", None, False))
 
 

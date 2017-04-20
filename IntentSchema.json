@@ -25,19 +25,19 @@
       ]
     },
     {
-      "intent": "MyHelpIntent"
+      "intent": "MethodIntent",
+      "slots": [
+        {
+          "name": "Method",
+          "type": "LIST_OF_METHODS"
+        }
+      ]
     },
     {
       "intent": "ChangeHowIWakeUp"
     },
     {
       "intent": "AMAZON.HelpIntent"
-    },
-    {
-      "intent": "MyStopIntent"
-    },
-    {
-      "intent": "MyRestartIntent"
     }
   ]
 }
