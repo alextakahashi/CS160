@@ -13,6 +13,7 @@ conn = boto.dynamodb.connect_to_region(
 
 # Speech Outputs:
 alarm_set_time = "9:30 AM "
+alarm_method = "math "
 settings_options = "You can say \
                     Set alarm \
                     or \
@@ -81,7 +82,7 @@ def get_welcome_response():
     add those here
     """
     print('LAUNCH')
-    session_attributes = create_dialog_attributes()
+    session_attributes = create_dialog_attributes(alarm_set_time, alarm_method)
     card_title = "Welcome"
     speech_output = welcome_response
     reprompt_text = welcome_reprompt
@@ -91,7 +92,7 @@ def get_welcome_response():
 
 def get_settings_response():
     print('Settings')
-    session_attributes = create_dialog_attributes()
+    session_attributes = create_dialog_attributes(alarm_set_time, alarm_method)
     card_title = "Settings"
     speech_output = settings_response
     reprompt_text = settings_reprompt
@@ -101,7 +102,7 @@ def get_settings_response():
 
 def get_set_alarm_response():
     print('Set Alarm')
-    session_attributes = create_dialog_attributes()
+    session_attributes = create_dialog_attributes(alarm_set_time, alarm_method)
     card_title = "Set Alarm"
     speech_output = set_alarm_response
     reprompt_text = set_alarm_reprompt
@@ -111,7 +112,7 @@ def get_set_alarm_response():
 
 def get_change_how_i_wake_up_response():
     print("Change How I Wake Up")
-    session_attributes = create_dialog_attributes()
+    session_attributes = create_dialog_attributes(alarm_set_time, alarm_method)
     card_title = "Change How I Wake Up"
     speech_output = change_how_i_wake_up_response
     reprompt_text = change_how_i_wake_up_reprompt
@@ -153,13 +154,16 @@ def dialog(intent, session):
 
     if 'Time' in intent['slots']:
         time = intent['slots']['Time']['value']
-        session_attributes = create_dialog_attributes(time)
+        # Push Time to DB
+        alarm_set_time = time
+        session_attributes = create_dialog_attributes(alarm_set_time, alarm_method)
         speech_output = "I have set your alarm for " + time
 
     if 'Method' in intent['slots']:
         method = intent['slots']['Method']['value']
-        # Must get time first
-        session_attributes = create_dialog_attributes(method)
+        alarm_method = method
+        # Push Method to DB
+        session_attributes = create_dialog_attributes(alarm_set_time, alarm_method)
         speech_output = "You are now set up to wake up to " + method
 
     return build_response(session_attributes, build_speechlet_response(
@@ -223,7 +227,7 @@ def on_session_ended(session_ended_request, session):
 
     Is not called when the skill returns should_end_session=true
     """
-    return build_response(create_dialog_attributes(), build_speechlet_response(
+    return build_response(create_dialog_attributes(alarm_set_time, alarm_method), build_speechlet_response(
         "", "", None, False))
 
 
