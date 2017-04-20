@@ -27,9 +27,19 @@ settings_reprompt = settings_options
 set_alarm_options = "You can say \
                      something like ... \
                      9:30AM." 
-set_alarm_response = "What time would you like to wake up at? " + set_alarm_options
+set_alarm_response = "What time would you like to wake up? " + set_alarm_options
 set_alarm_reprompt = set_alarm_options
 
+change_how_i_wake_up_options = "You can say \
+                                simple math, \
+                                trivia, \
+                                weather, \
+                                or \
+                                news."
+change_how_i_wake_up_response = "Choose how you would like to wake up. " + change_how_i_wake_up_options
+change_how_i_wake_up_reprompt = change_how_i_wake_up_options
+
+alarm_set_response = "Your alarm has been set to " + alarm_set_time
 
 session_end_response = "Quitting Session.  Your alarm has been set to " + alarm_set_time
 
@@ -100,6 +110,16 @@ def get_set_alarm_response():
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+def get_change_how_i_wake_up_response():
+    print("Change How I Wake Up")
+    session_attributes = create_dialog_attributes("")
+    card_title = "Change How I Wake Up"
+    speech_output = change_how_i_wake_up_response
+    reprompt_text = change_how_i_wake_up_reprompt
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
 def get_help_response():
     session_attributes = {}
     card_title = "Help"
@@ -116,11 +136,11 @@ def handle_session_end_request():
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
-def create_dialog_attributes(dialog_request, dialog=0, recipe=None):
+def create_dialog_attributes(dialog_request, dialog=0, alarmTime="9:30 AM"):
     return {
         "dialogRequest": dialog_request,
         "dialog": dialog,
-        "recipe": recipe
+        "alarm_time": alarmTime
         }
 
 def stop_handle(intent, session):
@@ -142,25 +162,27 @@ def stop_handle(intent, session):
         card_title, speech_output, reprompt_text, should_end_session))
 
 def dialog(intent, session):
-    default_dialog = "What would you like to do?"
-    failure_speech = "I couldn't make that configuration. Would you like to try again?"  
+    print("Dialog")
+    default_dialog = "So you want to change your alarm time."
+    failure_speech = "This did not work."  
     session_attributes = {}
     reprompt_text = None
     card_title = intent['name']
     should_end_session = False
 
-    if 'Item' in intent['slots']:
-        dialog_request = intent['slots']['Item']['value']
+    print("This is the intent")
+    print(intent)
+
+    intent_name = intent['name']
+
+    print("these are the intents")
+    print(intent['slots'])
+
+    if 'Time' in intent['slots']:
+        dialog_request = intent['slots']['Time']['value']
         session_attributes = create_dialog_attributes(dialog_request)
-        speech_output = default_dialog
+        speech_output = "I have set your alarm for " + dialog_request
 
-        #At this point, you should get the table and then push stuff into it.
-        table = conn.get_table('wakeMeUpInside')
-        #item = table.scan().response
-
-    # Setting reprompt_text to None signifies that we do not want to reprompt
-    # the user. If the user does not respond or says something that is not
-    # understood, the session will end.
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
 
@@ -175,25 +197,6 @@ def wakemeup(intent, session):
     #This grabs every item. Consider using table.query() for this part.
     table = conn.get_table('wakeMeUpInside')
     item = table.scan().response
-
-def howto(intent, session):
-    session_attributes = {}
-    reprompt_text = None
-    card_title = intent['name']
-    should_end_session = False
-    card_title = "Help"
-    speech_output = "You can say these things. \
-            Find recipe. \
-            I'd like to make recipe. Exit. Quit."
-
-    if 'attributes' in session:
-        session_attributes = session['attributes']
-
-    # Setting reprompt_text to None signifies that we do not want to reprompt
-    # the user. If the user does not respond or says something that is not
-    # understood, the session will end.
-    return build_response(session_attributes, build_speechlet_response(
-        intent['name'], speech_output, reprompt_text, should_end_session))
 
 # --------------- Events ------------------
 
@@ -229,6 +232,10 @@ def on_intent(intent_request, session):
         return get_settings_response()
     elif intent_name == "SetAlarmIntent":
         return get_set_alarm_response()
+    elif intent_name == "SetAlarmAt":
+        return dialog(intent, session)
+    elif intent_name == "ChangeHowIWakeUp":
+        return get_change_how_i_wake_up_response()
     elif intent_name == "MyHelpIntent":
         return howto(intent, session)
     elif intent_name == "AMAZON.HelpIntent":

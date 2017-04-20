@@ -7,6 +7,15 @@
       "intent": "SetAlarmIntent"
     },
     {
+      "intent": "SetAlarmAt",
+      "slots": [
+        {
+          "name": "Time",
+          "type": "AMAZON.TIME"
+        }
+      ]
+    },
+    {
       "intent": "DialogIntent",
       "slots": [
         {
