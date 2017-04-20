@@ -1,5 +1,6 @@
 from __future__ import print_function
 import boto.dynamodb
+import random
 
 # Global access to connection. We'll need it across the board so initialize it now.
 aws_access_key_id='AKIAJTXGYAYQRU4666WA'
@@ -73,6 +74,11 @@ def build_response(session_attributes, speechlet_response):
         'response': speechlet_response
     }
 
+def get_dialog_attributes(session):
+    session_attributes = create_dialog_attributes()
+    if 'attributes' in session:
+        session_attributes = session['attributes']
+    return session_attributes
 
 # --------------- Functions that control the skill's behavior ------------------
 
@@ -177,6 +183,23 @@ def wakemeup(intent, session):
     table = conn.get_table('wakeMeUpInside')
     item = table.scan().response
 
+def mathme(intent, session):
+    session_attributes = create_dialog_attributes()
+    speech_output = ""
+    reprompt_text = ""
+    reprompt_text = None
+    card_title = intent['name']
+    should_end_session = False
+
+    #First, determine if a previous question was 
+
+    num1 = random.randint(1,12)
+    num2 = random.randint(1,12)
+
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
 # --------------- Events ------------------
 
 def on_session_started(session_started_request, session):
@@ -206,6 +229,8 @@ def on_intent(intent_request, session):
         return dialog(intent, session)
     elif intent_name == "ChangeHowIWakeUp":
         return get_change_how_i_wake_up_response()
+    elif intent_name == "MathMeIntent" or intent_name == "AMAZON.Number":
+        return mathme(intent, session)
     elif intent_name == "MethodIntent":
         return dialog(intent, session)
     elif intent_name == "MyHelpIntent":

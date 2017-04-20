@@ -25,6 +25,12 @@
       ]
     },
     {
+        "intent": "MathMeIntent"
+    },
+    {
+      "intent": "AMAZON.Number"
+    },
+    {
       "intent": "MethodIntent",
       "slots": [
         {

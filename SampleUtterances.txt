@@ -12,3 +12,7 @@ SetAlarmAt {Time}
 ChangeHowIWakeUp change how I wake up
 
 MethodIntent {Method}
+
+MathMeIntent math me alexa
+MathMeIntent invoke math alarm
+MathMeIntent invoke math
