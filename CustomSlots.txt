@@ -1,0 +1,2 @@
+LIST_OF_METHODS	
+math | trivia | weather | news
