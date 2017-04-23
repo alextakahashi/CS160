@@ -16,3 +16,7 @@ MethodIntent {Method}
 MathMeIntent math me alexa
 MathMeIntent invoke math alarm
 MathMeIntent invoke math
+
+MathNumberIntent {Number}
+MathNumberIntent Is it {Number}
+MathNumberIntent I think it's {Number}

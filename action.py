@@ -187,16 +187,53 @@ def mathme(intent, session):
     session_attributes = create_dialog_attributes()
     speech_output = ""
     reprompt_text = ""
-    reprompt_text = None
+    reprompt_text = ""
     card_title = intent['name']
     should_end_session = False
 
-    #First, determine if a previous question was 
+    was_question_correct = False
+    #First, determine if a previous question was released. If so, check the response.
+    if 'questions_asked' in session_attributes and 'solution' in session_attributes:
+        intent_name = intent['name']
+        if intent_name == "MathNumberIntent":
+            #Grab the solution and check it. If this fails for whatever reason, 
+            #there's no error checking yet. But something was said out of order, 
+            #probably.
+            try:
+                potential_solution = intent['slots']['Number']['value']
+                solution = session_attributes['solution']
 
-    num1 = random.randint(1,12)
-    num2 = random.randint(1,12)
+                if int(potential_solution) == int(solution):
+                    speech_output += "Good job, that's correct!"
+                    was_question_correct = True
+                else:
+                    speech_output += "That's not quite correct, please try again!"
+                    speech_output += "What is %d times %d?" % (session_attributes['num1'], session_attributes['num2'])
+            except:
+                continue
 
+    #Then, check if we've asked enough questions. If so, exit MathMe.
+    if 'questions_asked' in session_attributes and \
+            session_attributes['questions_asked'] > 2:
+        should_end_session = True
+        speech_output += "That's it, no more questions! Good morning!"
 
+    #Finally, if we want to ask another question, do it.
+    elif was_question_correct = True:
+        num1 = random.randint(1,12)
+        num2 = random.randint(1,12)
+        solution = num1 * num2
+        session_attributes['solution'] = solution
+        session_attributes['num1'] = num1
+        session_attributes['num2'] = num2
+        speech_output += "What is %d times %d?" % (num1, num2)
+
+    if 'questions_asked' in session_attributes:
+        session_attributes['questions_asked'] += 1
+    else:
+        session_attributes['questions_asked'] = 1
+
+    reprompt_text = speech_output
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -229,7 +266,7 @@ def on_intent(intent_request, session):
         return dialog(intent, session)
     elif intent_name == "ChangeHowIWakeUp":
         return get_change_how_i_wake_up_response()
-    elif intent_name == "MathMeIntent" or intent_name == "AMAZON.Number":
+    elif intent_name == "MathMeIntent" or intent_name == "MathNumberIntent":
         return mathme(intent, session)
     elif intent_name == "MethodIntent":
         return dialog(intent, session)
