@@ -184,54 +184,53 @@ def wakemeup(intent, session):
     item = table.scan().response
 
 def mathme(intent, session):
-    session_attributes = create_dialog_attributes()
+    session_attributes = session['attributes']
     speech_output = ""
     reprompt_text = ""
     reprompt_text = ""
     card_title = intent['name']
     should_end_session = False
-
     was_question_correct = False
+    questions_asked = 0
+    intent_name = intent['name']
+    if 'questions_asked' in session_attributes:
+        questions_asked = session_attributes['questions_asked']
+
     #First, determine if a previous question was released. If so, check the response.
-    if 'questions_asked' in session_attributes and 'solution' in session_attributes:
-        intent_name = intent['name']
+    if questions_asked > 0 and 'solution' in session_attributes:
         if intent_name == "MathNumberIntent":
             #Grab the solution and check it. If this fails for whatever reason, 
             #there's no error checking yet. But something was said out of order, 
             #probably.
-            try:
-                potential_solution = intent['slots']['Number']['value']
-                solution = session_attributes['solution']
+            # try:
+            potential_solution = intent['slots']['Number']['value']
+            solution = session_attributes['solution']
 
-                if int(potential_solution) == int(solution):
-                    speech_output += "Good job, that's correct!"
-                    was_question_correct = True
-                else:
-                    speech_output += "That's not quite correct, please try again!"
-                    speech_output += "What is %d times %d?" % (session_attributes['num1'], session_attributes['num2'])
-            except:
-                continue
+            if int(potential_solution) == int(solution):
+                speech_output += "Good job, that's correct!"
+                was_question_correct = True
+            else:
+                speech_output += "That's not quite correct, please try again!"
+                speech_output += "What is %d times %d?" % (session_attributes['num1'], session_attributes['num2'])
+            # except:
+            #     print("Error in asking questions for math me!")
 
     #Then, check if we've asked enough questions. If so, exit MathMe.
-    if 'questions_asked' in session_attributes and \
-            session_attributes['questions_asked'] > 2:
+    if questions_asked > 2:
         should_end_session = True
         speech_output += "That's it, no more questions! Good morning!"
 
     #Finally, if we want to ask another question, do it.
-    elif was_question_correct = True:
-        num1 = random.randint(1,12)
-        num2 = random.randint(1,12)
+    elif was_question_correct == True or (questions_asked < 1 and intent_name == "MathMeIntent"):
+        num1 = random.randint(4,12)
+        num2 = random.randint(4,12)
         solution = num1 * num2
         session_attributes['solution'] = solution
         session_attributes['num1'] = num1
         session_attributes['num2'] = num2
         speech_output += "What is %d times %d?" % (num1, num2)
 
-    if 'questions_asked' in session_attributes:
-        session_attributes['questions_asked'] += 1
-    else:
-        session_attributes['questions_asked'] = 1
+        session_attributes['questions_asked'] = questions_asked + 1
 
     reprompt_text = speech_output
     return build_response(session_attributes, build_speechlet_response(
