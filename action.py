@@ -1,15 +1,15 @@
 from __future__ import print_function
-import boto.dynamodb
+import pymysql
 
 # Global access to connection. We'll need it across the board so initialize it now.
 aws_access_key_id='AKIAJTXGYAYQRU4666WA'
 AWSSecretKey='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'
 
-conn = boto.dynamodb.connect_to_region(
-        'us-east-1',
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=AWSSecretKey
-        )
+conn = pymysql.connect(host='colinschoen.me',
+                       user='wakemeup',
+                       password='2GqydTHnQqaFfUxy',
+                       db='wakemeup',
+                       cursorclass=pymysql.cursors.DictCursor)
 
 
 # Speech Outputs:
@@ -171,7 +171,6 @@ def invoke_alarm(intent, session):
 
 
 def dialog(intent, session):
-    print("Dialog")
     default_dialog = "So you want to change your alarm time."
     failure_speech = "This did not work."  
     session_attributes = {}
@@ -179,6 +178,7 @@ def dialog(intent, session):
     card_title = intent['name']
     should_end_session = False
     intent_name = intent['name']
+    uid = session['user']['userId']
 
     if 'Time' in intent['slots']:
         time = intent['slots']['Time']['value']
