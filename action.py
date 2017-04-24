@@ -77,12 +77,6 @@ def build_response(session_attributes, speechlet_response):
 
 # --------------- Functions that control the skill's behavior ------------------
 
-# Dispatch Dictionary
-methods = {
-        "math": math,
-        "quotes": quotes,
-        "weather": weather,
-        }
 
 def math(intent, session):
     pass
@@ -92,6 +86,13 @@ def quotes(intent, session):
 
 def weather(intent, session):
     pass
+
+# Dispatch Dictionary
+methods = {
+        "math": math,
+        "quotes": quotes,
+        "weather": weather,
+        }
 
 
 def get_welcome_response():
