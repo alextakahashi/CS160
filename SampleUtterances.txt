@@ -9,6 +9,9 @@ SetAlarmAt set alarm at {Time}
 SetAlarmAt wake me up at {Time}
 SetAlarmAt {Time}
 
+InvokeAlarm wake up now
+InvokeAlarm
+
 ChangeHowIWakeUp change how I wake up
 
 MethodIntent {Method}
