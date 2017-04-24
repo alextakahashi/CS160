@@ -15,3 +15,12 @@ InvokeAlarm invoke alarm
 ChangeHowIWakeUp change how I wake up
 
 MethodIntent {Method}
+
+MathMeIntent math me alexa
+MathMeIntent math me
+MathMeIntent invoke math alarm
+MathMeIntent invoke math
+
+MathNumberIntent {Number}
+MathNumberIntent Is it {Number}
+MathNumberIntent I think it's {Number}
