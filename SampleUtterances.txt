@@ -10,7 +10,7 @@ SetAlarmAt wake me up at {Time}
 SetAlarmAt {Time}
 
 InvokeAlarm wake up now
-InvokeAlarm
+InvokeAlarm invoke alarm
 
 ChangeHowIWakeUp change how I wake up
 
