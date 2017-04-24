@@ -1,0 +1,6 @@
+LIST_OF_METHODS
+reddit
+weather
+questions
+math
+calendar
