@@ -28,6 +28,18 @@
       ]
     },
     {
+        "intent": "MathMeIntent"
+    },
+    {
+      "intent": "MathNumberIntent",
+      "slots": [
+        {
+          "name": "Number",
+          "type": "AMAZON.Number"
+        }
+      ]
+    },
+    {
       "intent": "MethodIntent",
       "slots": [
         {
