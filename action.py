@@ -12,6 +12,7 @@ conn = boto.dynamodb.connect_to_region(
         aws_secret_access_key=AWSSecretKey
         )
 
+
 # Speech Outputs:
 alarm_set_time = "9:30 AM "
 settings_options = "You can say \
@@ -82,6 +83,24 @@ def get_dialog_attributes(session):
 
 # --------------- Functions that control the skill's behavior ------------------
 
+
+def math(intent, session):
+    pass
+
+def quotes(intent, session):
+    pass
+
+def weather(intent, session):
+    pass
+
+# Dispatch Dictionary
+methods = {
+        "math": math,
+        "quotes": quotes,
+        "weather": weather,
+        }
+
+
 def get_welcome_response():
     """ If we wanted to initialize the session to have some attributes we could
     add those here
@@ -146,6 +165,16 @@ def create_dialog_attributes(alarmTime="9:30 AM", method="math"):
         "alarm_time": alarmTime,
         "method": method,
         }
+
+def invoke_alarm(intent, session):
+    # Fetch the wake up type from the session
+    assert session['method'] in methods, "Invalid method sent"
+    
+    # Use our dispatch dictionary
+    methods[session['method']](intent, session)
+
+    # We can add any hooks below here in the future
+
 
 def dialog(intent, session):
     print("Dialog")

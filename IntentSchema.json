@@ -16,6 +16,9 @@
       ]
     },
     {
+      "intent": "InvokeAlarm"
+    },
+    {
       "intent": "DialogIntent",
       "slots": [
         {
