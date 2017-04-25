@@ -36,7 +36,7 @@ change_how_i_wake_up_options = "You can say \
                                 trivia, \
                                 weather, \
                                 or \
-                                news."
+                                quotes."
 change_how_i_wake_up_response = "Choose how you would like to wake up. " + change_how_i_wake_up_options
 change_how_i_wake_up_reprompt = change_how_i_wake_up_options
 

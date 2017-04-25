@@ -7,7 +7,6 @@ SetAlarmIntent set alarm
 SetAlarmAt set alarm for {Time}
 SetAlarmAt set alarm at {Time}
 SetAlarmAt wake me up at {Time}
-SetAlarmAt {Time}
 
 InvokeAlarm wake up now
 InvokeAlarm invoke alarm
