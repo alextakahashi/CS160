@@ -177,6 +177,17 @@ def invoke_alarm(intent, session):
 
     # We can add any hooks below here in the future
 
+def insert_query(sql, values=()):
+    with conn.cursor() as cursor:
+        cursor.execute(sql, values)
+    conn.commit()
+
+def select_query(sql, values=()):
+    with conn.cursor() as cursor:
+        cursor.execute(sql, values)
+        result = cursor.fetchone()
+    conn.commit()
+    return result
 
 def dialog(intent, session):
     default_dialog = "So you want to change your alarm time."
@@ -192,12 +203,26 @@ def dialog(intent, session):
         time = intent['slots']['Time']['value']
         session_attributes = create_dialog_attributes(time)
         speech_output = "I have set your alarm for " + time
+        result = select_query("SELECT * FROM settings WHERE uid=%s AND name=%s", 
+                (uid, "time"))
+        if not result:
+            insert_query("INSERT INTO settings (uid, name, value) VALUES (%s, %s, %s)", (uid, "time", time))
+        else:
+            insert_query("UPDATE settings SET value=%s WHERE uid=%s AND name=%s", 
+                    (time, uid, "time"))
 
     if 'Method' in intent['slots']:
         method = intent['slots']['Method']['value']
         # Must get time first
         session_attributes = create_dialog_attributes(method)
         speech_output = "You are now set up to wake up to " + method
+        result = select_query("SELECT * FROM settings WHERE uid=%s AND name=%s", 
+                (uid, "method"))
+        if not result:
+            insert_query("INSERT INTO settings (uid, name, value) VALUES (%s, %s, %s)", (uid, "method", method))
+        else:
+            insert_query("UPDATE settings SET value=%s WHERE uid=%s AND name=%s", 
+                    (method, uid, "method"))
 
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
