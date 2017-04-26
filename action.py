@@ -78,10 +78,27 @@ def build_response(session_attributes, speechlet_response):
     }
 
 def get_dialog_attributes(session):
+    uid = session['user']['userId']
+    preferences = get_preferences(uid)
     session_attributes = create_dialog_attributes()
     if 'attributes' in session:
         session_attributes = session['attributes']
     return session_attributes
+
+def get_preferences(uid):
+    preferences = {}
+    result = select_query("SELECT value FROM settings WHERE uid=%s AND name=%s", (uid, "time"))
+    if result:
+        preferences["time"] = result["time"]
+    else:
+        preferences["time"] = 09:00
+    result = select_query("SELECT value FROM settings WHERE uid=%s AND name=%s", (uid, "method"))
+
+    if result:
+        preferences["method"] = result["method"]
+    else:
+        preferences["method"] = "trivia"
+    return preferences
 
 # --------------- Functions that control the skill's behavior ------------------
 
