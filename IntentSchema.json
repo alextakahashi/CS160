@@ -22,6 +22,9 @@
       "intent": "InvokeAlarm"
     },
     {
+      "intent": "WeatherMeIntent"
+    },
+    {
       "slots": [
         {
           "name": "Item",

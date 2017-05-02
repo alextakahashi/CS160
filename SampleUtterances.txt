@@ -20,3 +20,8 @@ ChangeHowIWakeUp change how I wake up
 QuoteMeIntent invoke quotes
 QuoteMeIntent invoke quotes alarm
 QuoteMeIntent quote me
+WeatherMeIntent weather me
+WeatherMeIntent invoke weather
+WeatherMeIntent invoke weather alarm
+WeatherMeIntent weather
+WeatherMeIntent whats the weather

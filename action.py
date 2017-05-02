@@ -282,7 +282,6 @@ def quoteme(intent, session):
     quote_count = 1
 
     while (quote_count < 3):
-        quote_prologue = "Quote number " + str(quote_count) + " "
         url = "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&callback="
         response = urllib.urlopen(url)
         data = json.loads(response.read())
@@ -296,6 +295,22 @@ def quoteme(intent, session):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+def weatherme(intent, session):
+    session_attributes = session['attributes']
+    speech_output = "Good morning! "
+    reprompt_text = ""
+    card_title = intent['name']
+    should_end_session = True
+    url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22berkeley%2C%20ca%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys"
+    response = urllib.urlopen(url)
+    data = json.loads(response.read())
+    right_now = data['query']['results']['channel']['item']['condition']
+    speech_output += "Currently the weather is %s with a temperature of %s. " % (right_now['text'], right_now['temp'])
+    today = data['query']['results']['channel']['item']['forecast'][0]
+    speech_output += "Today, %s, it is %s with a high of %s and a low of %s." % (today['date'], today['text'], today['high'], today['low'])
+    
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
 
 # --------------- Events ------------------
 
@@ -330,6 +345,8 @@ def on_intent(intent_request, session):
         return mathme(intent, session)
     elif intent_name == "QuoteMeIntent":
         return quoteme(intent, session)
+    elif intent_name == "WeatherMeIntent":
+        return weatherme(intent, session)
     elif intent_name == "MethodIntent":
         return dialog(intent, session)
     elif intent_name == "MyHelpIntent":
