@@ -257,6 +257,8 @@ def mathme(intent, session):
         session_attributes['solution'] = solution
         session_attributes['num1'] = num1
         session_attributes['num2'] = num2
+        if (questions_asked < 1 and intent_name == "MathMeIntent"):
+            speech_output += "Good morning! Today I will be asking you three different math questions to jog your brain."
         speech_output += "What is %d times %d?" % (num1, num2)
 
         session_attributes['questions_asked'] = questions_asked + 1
