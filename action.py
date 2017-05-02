@@ -307,7 +307,7 @@ def weatherme(intent, session):
     right_now = data['query']['results']['channel']['item']['condition']
     speech_output += "Currently the weather is %s with a temperature of %s. " % (right_now['text'], right_now['temp'])
     today = data['query']['results']['channel']['item']['forecast'][0]
-    speech_output = "Today, %s, it is %s with a high of %s and a low of %s." % (today['date'], today['text'], today['high'], today['low'])
+    speech_output += "Today, %s, it is %s with a high of %s and a low of %s." % (today['date'], today['text'], today['high'], today['low'])
     
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
