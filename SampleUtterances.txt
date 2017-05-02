@@ -1,25 +1,19 @@
 SettingsIntent settings
 SettingsIntent Configuration
 SettingsIntent Options
-
 SetAlarmIntent set alarm
-
 SetAlarmAt set alarm for {Time}
 SetAlarmAt set alarm at {Time}
 SetAlarmAt wake me up at {Time}
-
+SetAlarmAt {Time}
 InvokeAlarm wake up now
 InvokeAlarm invoke alarm
-
-ChangeHowIWakeUp change how I wake up
-
-MethodIntent {Method}
-
 MathMeIntent math me alexa
 MathMeIntent math me
 MathMeIntent invoke math alarm
 MathMeIntent invoke math
-
 MathNumberIntent {Number}
 MathNumberIntent Is it {Number}
 MathNumberIntent I think it's {Number}
+MethodIntent {Method}
+ChangeHowIWakeUp change how I wake up

@@ -7,46 +7,46 @@
       "intent": "SetAlarmIntent"
     },
     {
-      "intent": "SetAlarmAt",
       "slots": [
         {
           "name": "Time",
           "type": "AMAZON.TIME"
         }
-      ]
+      ],
+      "intent": "SetAlarmAt"
     },
     {
       "intent": "InvokeAlarm"
     },
     {
-      "intent": "DialogIntent",
       "slots": [
         {
           "name": "Item",
           "type": "AMAZON.Food"
         }
-      ]
+      ],
+      "intent": "DialogIntent"
     },
     {
-        "intent": "MathMeIntent"
+      "intent": "MathMeIntent"
     },
     {
-      "intent": "MathNumberIntent",
       "slots": [
         {
           "name": "Number",
-          "type": "AMAZON.Number"
+          "type": "AMAZON.NUMBER"
         }
-      ]
+      ],
+      "intent": "MathNumberIntent"
     },
     {
-      "intent": "MethodIntent",
       "slots": [
         {
           "name": "Method",
           "type": "LIST_OF_METHODS"
         }
-      ]
+      ],
+      "intent": "MethodIntent"
     },
     {
       "intent": "ChangeHowIWakeUp"
