@@ -17,3 +17,6 @@ MathNumberIntent Is it {Number}
 MathNumberIntent I think it's {Number}
 MethodIntent {Method}
 ChangeHowIWakeUp change how I wake up
+QuoteMeIntent invoke quotes
+QuoteMeIntent invoke quotes alarm
+QuoteMeIntent quote me

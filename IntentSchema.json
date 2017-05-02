@@ -4,6 +4,9 @@
       "intent": "SettingsIntent"
     },
     {
+      "intent": "QuoteMeIntent"
+    },
+    {
       "intent": "SetAlarmIntent"
     },
     {

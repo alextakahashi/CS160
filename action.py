@@ -277,7 +277,7 @@ def quoteme(intent, session):
     speech_output = quote_me_weclome_response
     reprompt_text = ""
     card_title = intent['name']
-    should_end_session = False
+    should_end_session = True
 
     quote_count = 1
 
