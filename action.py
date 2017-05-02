@@ -1,6 +1,8 @@
 from __future__ import print_function
 import boto.dynamodb
 import random
+import urllib, json
+
 
 # Global access to connection. We'll need it across the board so initialize it now.
 aws_access_key_id='AKIAJTXGYAYQRU4666WA'
@@ -43,6 +45,9 @@ change_how_i_wake_up_reprompt = change_how_i_wake_up_options
 alarm_set_response = "Your alarm has been set to " + alarm_set_time
 
 session_end_response = "Quitting Session.  Your alarm has been set to " + alarm_set_time
+
+quote_me_weclome_response = "Good Morning! I will list you 2 quotes to get you started with your day. "
+quote_me_end_response = "Thanks for listening.  Have a nice day!"
 
 
 # --------------- Helpers that build all of the responses ----------------------
@@ -105,6 +110,7 @@ def get_welcome_response():
     """ If we wanted to initialize the session to have some attributes we could
     add those here
     """
+
     print('LAUNCH')
     session_attributes = create_dialog_attributes()
     card_title = "Welcome"
@@ -265,6 +271,32 @@ def mathme(intent, session):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+def quoteme(intent, session):
+
+    session_attributes = session['attributes']
+    speech_output = quote_me_weclome_response
+    reprompt_text = ""
+    card_title = intent['name']
+    should_end_session = False
+
+    quote_count = 1
+
+    while (quote_count < 3):
+        quote_prologue = "Quote number " + str(quote_count) + " "
+        url = "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&callback="
+        response = urllib.urlopen(url)
+        data = json.loads(response.read())
+        quote = data[0]['content']
+        speech_output = speech_output + quote_prologue + quote
+        quote_count += 1
+
+    speech_output += quote_me_end_response
+
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
 # --------------- Events ------------------
 
 def on_session_started(session_started_request, session):
@@ -296,6 +328,8 @@ def on_intent(intent_request, session):
         return get_change_how_i_wake_up_response()
     elif intent_name == "MathMeIntent" or intent_name == "MathNumberIntent":
         return mathme(intent, session)
+    elif intent_name == "QuoteMeIntent":
+        return quoteme(intent, session)
     elif intent_name == "MethodIntent":
         return dialog(intent, session)
     elif intent_name == "MyHelpIntent":
