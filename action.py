@@ -192,7 +192,7 @@ def invoke_alarm(intent, session):
     assert method in methods, "Invalid method sent {}".format(method)
     
     # Use our dispatch dictionary
-    methods[method](intent, session)
+    return methods[method](intent, session)
 
     # We can add any hooks below here in the future
 
