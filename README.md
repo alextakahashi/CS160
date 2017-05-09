@@ -1,5 +1,5 @@
 Wake Me Up Inside
-[![Logo](http://img.colinschoen.com/image.php?di=OJ8N) =30x]
+[![Logo](http://img.colinschoen.com/image.php?di=OJ8N)]
 ===================
 
 [![CircleCI](https://circleci.com/gh/alextakahashi/CS160.svg?style=svg&circle-token=ce788bfb7742f8bd709b8785a4d44470726b718c)](https://circleci.com/gh/alextakahashi/CS160)
