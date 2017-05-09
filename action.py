@@ -91,7 +91,7 @@ def get_preferences(uid):
     if result:
         preferences["time"] = result["time"]
     else:
-        preferences["time"] = 09:00
+        preferences["time"] = "09:00"
     result = select_query("SELECT value FROM settings WHERE uid=%s AND name=%s", (uid, "method"))
 
     if result:
@@ -332,6 +332,8 @@ def on_intent(intent_request, session):
     # Dispatch to your skill's intent handlers
     if intent_name == "SettingsIntent":
         return get_settings_response()
+    elif intent_name == "InvokeAlarm":
+        return invoke_alarm(intent, session)
     elif intent_name == "SetAlarmIntent":
         return get_set_alarm_response()
     elif intent_name == "SetAlarmAt":
