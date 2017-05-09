@@ -105,10 +105,6 @@ def get_preferences(uid):
 
 
 
-# Dispatch Dictionary
-methods = {
-        "math": mathme,
-        }
 
 
 def get_welcome_response():
@@ -301,6 +297,11 @@ def mathme(intent, session):
     reprompt_text = speech_output
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
+
+# Dispatch Dictionary
+methods = {
+        "math": mathme,
+        }
 
 # --------------- Events ------------------
 
