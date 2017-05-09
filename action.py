@@ -187,10 +187,12 @@ def create_dialog_attributes(alarmTime="9:30 AM", method="math"):
 
 def invoke_alarm(intent, session):
     # Fetch the wake up type from the session
-    assert session['method'] in methods, "Invalid method sent"
+    attributes = session['attributes']
+    method = attributes['method']
+    assert method in methods, "Invalid method sent {}".format(method)
     
     # Use our dispatch dictionary
-    methods[session['method']](intent, session)
+    methods[method](intent, session)
 
     # We can add any hooks below here in the future
 
