@@ -91,7 +91,7 @@ def get_preferences(uid):
     if result:
         preferences["time"] = result["time"]
     else:
-        preferences["time"] = 09:00
+        preferences["time"] = "09:00"
     result = select_query("SELECT value FROM settings WHERE uid=%s AND name=%s", (uid, "method"))
 
     if result:
@@ -103,21 +103,8 @@ def get_preferences(uid):
 # --------------- Functions that control the skill's behavior ------------------
 
 
-def math(intent, session):
-    pass
 
-def quotes(intent, session):
-    pass
 
-def weather(intent, session):
-    pass
-
-# Dispatch Dictionary
-methods = {
-        "math": math,
-        "quotes": quotes,
-        "weather": weather,
-        }
 
 
 def get_welcome_response():
@@ -187,10 +174,12 @@ def create_dialog_attributes(alarmTime="9:30 AM", method="math"):
 
 def invoke_alarm(intent, session):
     # Fetch the wake up type from the session
-    assert session['method'] in methods, "Invalid method sent"
+    attributes = session['attributes']
+    method = attributes['method']
+    assert method in methods, "Invalid method sent {}".format(method)
     
     # Use our dispatch dictionary
-    methods[session['method']](intent, session)
+    return methods[method](intent, session)
 
     # We can add any hooks below here in the future
 
@@ -309,6 +298,11 @@ def mathme(intent, session):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+# Dispatch Dictionary
+methods = {
+        "math": mathme,
+        }
+
 # --------------- Events ------------------
 
 def on_session_started(session_started_request, session):
@@ -332,6 +326,8 @@ def on_intent(intent_request, session):
     # Dispatch to your skill's intent handlers
     if intent_name == "SettingsIntent":
         return get_settings_response()
+    elif intent_name == "InvokeAlarm":
+        return invoke_alarm(intent, session)
     elif intent_name == "SetAlarmIntent":
         return get_set_alarm_response()
     elif intent_name == "SetAlarmAt":
