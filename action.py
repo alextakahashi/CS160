@@ -103,20 +103,11 @@ def get_preferences(uid):
 # --------------- Functions that control the skill's behavior ------------------
 
 
-def math(intent, session):
-    pass
 
-def quotes(intent, session):
-    pass
-
-def weather(intent, session):
-    pass
 
 # Dispatch Dictionary
 methods = {
-        "math": math,
-        "quotes": quotes,
-        "weather": weather,
+        "math": mathme,
         }
 
 
