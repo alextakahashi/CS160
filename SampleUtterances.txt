@@ -17,3 +17,11 @@ MathNumberIntent Is it {Number}
 MathNumberIntent I think it's {Number}
 MethodIntent {Method}
 ChangeHowIWakeUp change how I wake up
+QuoteMeIntent invoke quotes
+QuoteMeIntent invoke quotes alarm
+QuoteMeIntent quote me
+WeatherMeIntent weather me
+WeatherMeIntent invoke weather
+WeatherMeIntent invoke weather alarm
+WeatherMeIntent weather
+WeatherMeIntent whats the weather

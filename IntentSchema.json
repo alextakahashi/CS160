@@ -4,6 +4,9 @@
       "intent": "SettingsIntent"
     },
     {
+      "intent": "QuoteMeIntent"
+    },
+    {
       "intent": "SetAlarmIntent"
     },
     {
@@ -17,6 +20,9 @@
     },
     {
       "intent": "InvokeAlarm"
+    },
+    {
+      "intent": "WeatherMeIntent"
     },
     {
       "slots": [
