@@ -1,18 +1,20 @@
 from __future__ import print_function
-import boto.dynamodb
+
+import pymysql
 import random
 import urllib, json
+
 
 
 # Global access to connection. We'll need it across the board so initialize it now.
 aws_access_key_id='AKIAJTXGYAYQRU4666WA'
 AWSSecretKey='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'
 
-conn = boto.dynamodb.connect_to_region(
-        'us-east-1',
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=AWSSecretKey
-        )
+conn = pymysql.connect(host='colinschoen.me',
+                       user='wakemeup',
+                       password='2GqydTHnQqaFfUxy',
+                       db='wakemeup',
+                       cursorclass=pymysql.cursors.DictCursor)
 
 
 # Speech Outputs:
@@ -81,29 +83,33 @@ def build_response(session_attributes, speechlet_response):
     }
 
 def get_dialog_attributes(session):
+    uid = session['user']['userId']
+    preferences = get_preferences(uid)
     session_attributes = create_dialog_attributes()
     if 'attributes' in session:
         session_attributes = session['attributes']
     return session_attributes
 
+def get_preferences(uid):
+    preferences = {}
+    result = select_query("SELECT value FROM settings WHERE uid=%s AND name=%s", (uid, "time"))
+    if result:
+        preferences["time"] = result["time"]
+    else:
+        preferences["time"] = "09:00"
+    result = select_query("SELECT value FROM settings WHERE uid=%s AND name=%s", (uid, "method"))
+
+    if result:
+        preferences["method"] = result["method"]
+    else:
+        preferences["method"] = "trivia"
+    return preferences
+
 # --------------- Functions that control the skill's behavior ------------------
 
 
-def math(intent, session):
-    pass
 
-def quotes(intent, session):
-    pass
 
-def weather(intent, session):
-    pass
-
-# Dispatch Dictionary
-methods = {
-        "math": math,
-        "quotes": quotes,
-        "weather": weather,
-        }
 
 
 def get_welcome_response():
@@ -174,16 +180,28 @@ def create_dialog_attributes(alarmTime="9:30 AM", method="math"):
 
 def invoke_alarm(intent, session):
     # Fetch the wake up type from the session
-    assert session['method'] in methods, "Invalid method sent"
+    attributes = session['attributes']
+    method = attributes['method']
+    assert method in methods, "Invalid method sent {}".format(method)
     
     # Use our dispatch dictionary
-    methods[session['method']](intent, session)
+    return methods[method](intent, session)
 
     # We can add any hooks below here in the future
 
+def insert_query(sql, values=()):
+    with conn.cursor() as cursor:
+        cursor.execute(sql, values)
+    conn.commit()
+
+def select_query(sql, values=()):
+    with conn.cursor() as cursor:
+        cursor.execute(sql, values)
+        result = cursor.fetchone()
+    conn.commit()
+    return result
 
 def dialog(intent, session):
-    print("Dialog")
     default_dialog = "So you want to change your alarm time."
     failure_speech = "This did not work."  
     session_attributes = {}
@@ -191,17 +209,32 @@ def dialog(intent, session):
     card_title = intent['name']
     should_end_session = False
     intent_name = intent['name']
+    uid = session['user']['userId']
 
     if 'Time' in intent['slots']:
         time = intent['slots']['Time']['value']
         session_attributes = create_dialog_attributes(time)
         speech_output = "I have set your alarm for " + time
+        result = select_query("SELECT * FROM settings WHERE uid=%s AND name=%s", 
+                (uid, "time"))
+        if not result:
+            insert_query("INSERT INTO settings (uid, name, value) VALUES (%s, %s, %s)", (uid, "time", time))
+        else:
+            insert_query("UPDATE settings SET value=%s WHERE uid=%s AND name=%s", 
+                    (time, uid, "time"))
 
     if 'Method' in intent['slots']:
         method = intent['slots']['Method']['value']
         # Must get time first
         session_attributes = create_dialog_attributes(method)
         speech_output = "You are now set up to wake up to " + method
+        result = select_query("SELECT * FROM settings WHERE uid=%s AND name=%s", 
+                (uid, "method"))
+        if not result:
+            insert_query("INSERT INTO settings (uid, name, value) VALUES (%s, %s, %s)", (uid, "method", method))
+        else:
+            insert_query("UPDATE settings SET value=%s WHERE uid=%s AND name=%s", 
+                    (method, uid, "method"))
 
     return build_response(session_attributes, build_speechlet_response(
         intent['name'], speech_output, reprompt_text, should_end_session))
@@ -311,6 +344,10 @@ def weatherme(intent, session):
     
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
+ # Dispatch Dictionary
+methods = {
+        "math": mathme,
+}
 
 # --------------- Events ------------------
 
@@ -335,6 +372,8 @@ def on_intent(intent_request, session):
     # Dispatch to your skill's intent handlers
     if intent_name == "SettingsIntent":
         return get_settings_response()
+    elif intent_name == "InvokeAlarm":
+        return invoke_alarm(intent, session)
     elif intent_name == "SetAlarmIntent":
         return get_set_alarm_response()
     elif intent_name == "SetAlarmAt":
